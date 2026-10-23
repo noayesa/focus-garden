@@ -1,0 +1,8 @@
+// Cloudflare settings: upload the built site in dist/ as a static website
+{
+  "name": "focus-garden",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
