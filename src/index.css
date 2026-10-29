@@ -460,8 +460,9 @@ button { font-family: inherit; cursor: pointer; }
   border: 2px solid var(--border);
   border-radius: 16px;
 }
-.shop-art { height: 80px; display: grid; place-items: center; }
-.shop-art .furniture-art { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+.shop-art { height: 80px; }
+/* Fill the box; the viewBox keeps the item's shape and fits it inside, so tall items shrink to fit too */
+.shop-art .furniture-art { width: 100%; height: 100%; }
 .shop-info { display: grid; gap: 2px; }
 .shop-name { text-transform: capitalize; }
 .shop-buy { padding: 8px 14px; white-space: nowrap; }
@@ -513,3 +514,24 @@ button { font-family: inherit; cursor: pointer; }
 .gallery-cell { width: 100px; }
 .gallery-cell .plant { width: 100%; height: auto; }
 .gallery-focus .gallery-cell { width: 150px; }
+
+/* Dev furniture gallery (?furniture): a slice of the room, same floor and heights as .stage */
+.fgal-room {
+  position: relative;
+  flex: 1;
+  height: 230px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 0 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: repeating-linear-gradient(90deg, #fbeee0 0 28px, #f7e4d2 28px 56px);
+}
+.fgal-room > :not(.floor) { position: relative; z-index: 1; }
+.fgal-bun { width: 130px; margin-bottom: 22px; }
+.fgal-item { margin-bottom: 24px; }
+.fgal-item.flat { margin-bottom: 4px; }
+.fgal-pot { width: 130px; margin-bottom: 24px; }
+.fgal-pot .plant { width: 100%; height: auto; }
+.fgal-shop { width: 110px; height: 80px; flex: 0 0 auto; }
