@@ -31,7 +31,9 @@ size and fanciness, so bigger and more special pieces are real goals:
 - **big or special pieces, 50 to 90**: armchair, bookshelf, record player
 - **showpieces, 100 and up**: things that change the whole room, like a big arched mirror
 
-As a feel check: an armchair costs about one rare plant, a showpiece about two legendary ones.
+As a feel check: small decor costs a handful of common plants or one or two uncommon ones,
+everyday furniture one or two rare ones, a big piece like the armchair (55) about one
+legendary, and a showpiece two legendary or more.
 Look at the prices already in `src/furniture/index.js` and keep similar items at similar prices.
 
 ## Steps
