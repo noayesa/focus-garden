@@ -3,10 +3,15 @@ import TaskList from './components/TaskList.jsx'
 import Timer from './components/Timer.jsx'
 import Garden from './components/Garden.jsx'
 import UnlockCard from './components/UnlockCard.jsx'
+import SellCard from './components/SellCard.jsx'
+import Shop from './components/Shop.jsx'
 import usePersistentState from './usePersistentState.js'
-import { PLANTS, randomPlantFor, stageForProgress } from './plants/index.js'
+import { PLANTS, TIERS, randomPlantFor, stageForProgress } from './plants/index.js'
+import { FURNITURE, sellBackPrice } from './furniture/index.js'
 
 const EMPTY_GARDEN = { shelf: [], floor: null, seen: [] }
+// Where new furniture appears on the floor (share of the room's width), taking turns
+const DROP_SPOTS = [0.25, 0.42, 0.12, 0.88]
 
 export default function App() {
   // Saved in the browser so they survive a refresh
@@ -16,6 +21,8 @@ export default function App() {
   const [garden, setGarden] = usePersistentState('fg-garden', EMPTY_GARDEN)
   // { startedAt, endsAt, minutes, taskId, revive } while a focus session runs
   const [session, setSession] = usePersistentState('fg-session', null)
+  // Furniture in the room: [{ id, type, x }], x = where its centre is (0 = left wall, 1 = right wall)
+  const [furniture, setFurniture] = usePersistentState('fg-furniture', [])
 
   const [focusTaskId, setFocusTaskId] = useState(null)
   const [now, setNow] = useState(Date.now())
@@ -25,6 +32,8 @@ export default function App() {
   const [event, setEvent] = useState(null)
   const [showUnlock, setShowUnlock] = useState(garden.floor?.progress >= 1)
   const [shelving, setShelving] = useState(null)
+  const [selling, setSelling] = useState(null) // the shelf plant whose sell card is open
+  const [shopOpen, setShopOpen] = useState(false)
 
   const { floor } = garden
 
@@ -114,6 +123,39 @@ export default function App() {
     setMood('idle')
   }
 
+  // Selling takes the plant off the shelf, but it stays in `seen` (your collection)
+  function sellPlant() {
+    const plant = selling
+    const info = PLANTS[plant.type]
+    const price = TIERS[info.tier].sellPrice
+    setGarden((g) => ({ ...g, shelf: g.shelf.filter((p) => p.id !== plant.id) }))
+    setCoins((c) => c + price)
+    setSelling(null)
+    setEvent({ kind: 'sold', key: Date.now() })
+    say(`Sold the ${info.name} for ${price} 🪙! It's still in your collection 📖`)
+  }
+
+  function buyFurniture(type) {
+    const item = FURNITURE[type]
+    if (coins < item.price) return
+    setCoins((c) => c - item.price)
+    setFurniture((f) => [...f, { id: Date.now(), type, x: DROP_SPOTS[f.length % DROP_SPOTS.length] }])
+    setShopOpen(false)
+    setEvent({ kind: 'bought', key: Date.now() })
+    say(`Ooh, a ${item.name}! Drag it wherever you like 🛋️`)
+  }
+
+  function moveFurniture(id, x) {
+    setFurniture((f) => f.map((it) => (it.id === id ? { ...it, x } : it)))
+  }
+
+  function sellBackFurniture(item) {
+    const price = sellBackPrice(item.type)
+    setFurniture((f) => f.filter((it) => it.id !== item.id))
+    setCoins((c) => c + price)
+    say(`Back to the shop it goes. Here's ${price} 🪙`)
+  }
+
   function addTask(title) {
     setTasks((prev) => [...prev, { id: Date.now(), title, sessions: 0, done: false, rewarded: false }])
   }
@@ -144,9 +186,10 @@ export default function App() {
         <h1>🌱 Focus Garden</h1>
         <p className="subtitle">Focus to grow plants. Longer sessions grow rarer ones!</p>
         <div className="stats">
-          <span title="Coins from finished tasks">🪙 {coins}</span>
+          <span title="Coins from finished tasks and sold plants">🪙 {coins}</span>
           <span title="Plants on your shelves">🪴 {garden.shelf.length}</span>
           <span title="Different plants discovered">📖 {garden.seen.length}/{Object.keys(PLANTS).length}</span>
+          <button className="shop-btn" onClick={() => setShopOpen(true)}>🛋️ Shop</button>
         </div>
       </header>
 
@@ -162,6 +205,11 @@ export default function App() {
             shelving={shelving}
             onPlaced={handlePlaced}
             onShelvingDone={handleShelvingDone}
+            // No selling while Bun is carrying a plant up, so the shelf doesn't shift under her
+            onPlantClick={shelving ? null : setSelling}
+            furniture={furniture}
+            onMoveFurniture={moveFurniture}
+            onSellFurniture={sellBackFurniture}
           />
         </section>
 
@@ -195,6 +243,8 @@ export default function App() {
       {showUnlock && floor && (
         <UnlockCard plant={floor} isNew={!garden.seen.includes(floor.type)} onClose={closeUnlock} />
       )}
+      {selling && <SellCard plant={selling} onSell={sellPlant} onClose={() => setSelling(null)} />}
+      {shopOpen && <Shop coins={coins} onBuy={buyFurniture} onClose={() => setShopOpen(false)} />}
     </div>
   )
 }

@@ -412,6 +412,99 @@ button { font-family: inherit; cursor: pointer; }
 .icon-btn { background: none; border: none; color: var(--muted); }
 .front-wilted { filter: saturate(0.35) brightness(0.92); }
 
+/* Shelf plants are buttons (tap to sell) */
+.shelf-plant { padding: 0; border: none; background: none; border-radius: 12px; }
+.shelf-plant:not(:disabled):hover { background: #ffffff66; }
+.shelf-plant:disabled { cursor: default; }
+.sell-card .unlock-plant { width: 130px; }
+.card-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* Shop button in the header */
+.shop-btn {
+  background: var(--peach);
+  color: #fff;
+  border: 2px solid #e48a5f;
+  border-radius: 999px;
+  padding: 2px 14px;
+  font-weight: 800;
+  box-shadow: 0 2px 0 #e48a5f;
+}
+
+/* Shop panel */
+.shop {
+  display: flex;
+  flex-direction: column;
+  width: min(460px, 100%);
+  max-height: min(600px, 90vh);
+  background: var(--card);
+  border: 3px solid var(--peach);
+  border-radius: 24px;
+  padding: 18px 18px 8px;
+  box-shadow: 0 6px 0 #e48a5f, 0 20px 50px rgba(0, 0, 0, 0.2);
+  animation: card-pop 0.5s cubic-bezier(.3, 1.5, .5, 1);
+}
+.shop-head { display: flex; align-items: center; gap: 10px; }
+.shop-head h2 { margin: 0; flex: 1; }
+.shop-coins { font-weight: 800; background: #fff; border: 2px solid var(--border); border-radius: 999px; padding: 2px 12px; }
+.shop-close { font-size: 1.2rem; }
+.shop-hint { margin: 6px 0 10px; }
+/* The list scrolls; the header stays put */
+.shop-list { list-style: none; margin: 0; padding: 0 4px 10px 0; overflow-y: auto; display: grid; gap: 10px; }
+.shop-item {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+}
+.shop-art { height: 80px; display: grid; place-items: center; }
+.shop-art .furniture-art { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+.shop-info { display: grid; gap: 2px; }
+.shop-name { text-transform: capitalize; }
+.shop-buy { padding: 8px 14px; white-space: nowrap; }
+.shop-short { grid-column: 3; text-align: center; margin-top: -8px; }
+
+/* Furniture standing on the floor (rugs lie flat, lower down) */
+.furniture { position: absolute; bottom: 24px; z-index: 1; }
+.furniture.flat { bottom: 4px; }
+.furniture.dragging { z-index: 2; }
+.furniture-art { display: block; overflow: visible; }
+.furniture-handle {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: grab;
+  touch-action: none; /* so dragging on a phone moves the item instead of scrolling */
+}
+.furniture.dragging .furniture-handle { cursor: grabbing; filter: drop-shadow(0 6px 4px #0000002a); }
+.furniture-handle:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; border-radius: 8px; }
+.furniture-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 6px 6px 8px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--border);
+  white-space: nowrap;
+  z-index: 4;
+}
+.furniture-menu .btn { padding: 4px 12px; font-size: 0.85rem; }
+
+@media (max-width: 520px) {
+  .shop-item { grid-template-columns: 80px 1fr; }
+  .shop-buy, .shop-short { grid-column: 1 / -1; }
+}
+
 /* Dev plant gallery (?gallery) */
 .gallery { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
 .gallery-row { display: flex; align-items: flex-end; gap: 4px; padding: 8px 0; border-bottom: 2px solid var(--border); }

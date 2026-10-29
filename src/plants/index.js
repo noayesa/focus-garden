@@ -57,12 +57,12 @@ export const PLANTS = {
   monsteraAlbo,
 }
 
-// Longer focus sessions grow rarer plants
+// Longer focus sessions grow rarer plants, which also sell for more coins
 export const TIERS = {
-  common: { label: 'Common', stars: 1, color: '#7fb36f', minMinutes: 0 },
-  uncommon: { label: 'Uncommon', stars: 2, color: '#5d9fd6', minMinutes: 25 },
-  rare: { label: 'Rare', stars: 3, color: '#a77fdc', minMinutes: 45 },
-  legendary: { label: 'Legendary', stars: 4, color: '#eba52c', minMinutes: 60 },
+  common: { label: 'Common', stars: 1, color: '#7fb36f', minMinutes: 0, sellPrice: 3 },
+  uncommon: { label: 'Uncommon', stars: 2, color: '#5d9fd6', minMinutes: 25, sellPrice: 8 },
+  rare: { label: 'Rare', stars: 3, color: '#a77fdc', minMinutes: 45, sellPrice: 20 },
+  legendary: { label: 'Legendary', stars: 4, color: '#eba52c', minMinutes: 60, sellPrice: 50 },
 }
 
 export function tierForMinutes(minutes) {

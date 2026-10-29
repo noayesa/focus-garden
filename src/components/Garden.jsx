@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Plant from './Plant.jsx'
+import RoomFurniture from './RoomFurniture.jsx'
 import WalkingBun from './WalkingBun.jsx'
+import { PLANTS } from '../plants/index.js'
 
 const SLOTS_PER_SHELF = 4
 const MIN_SHELVES = 2
@@ -25,7 +27,11 @@ function Sparkles() {
 
 // The cozy room. The growing plant sits in a big pot on the floor;
 // fully grown plants go up to the wall shelves (Bun carries them up a ladder).
-export default function Garden({ shelf, floor, floorStage, mood, message, event, shelving, onPlaced, onShelvingDone }) {
+// Tapping a shelf plant calls onPlantClick (to sell it); furniture you bought stands on the floor.
+export default function Garden({
+  shelf, floor, floorStage, mood, message, event, shelving, onPlaced, onShelvingDone,
+  onPlantClick, furniture, onMoveFurniture, onSellFurniture,
+}) {
   const roomRef = useRef(null)
   const [roomWidth, setRoomWidth] = useState(0)
   const [carrying, setCarrying] = useState(false)
@@ -72,10 +78,16 @@ export default function Garden({ shelf, floor, floorStage, mood, message, event,
                 {row.map((p, i) => {
                   const index = r * SLOTS_PER_SHELF + i
                   return p ? (
-                    <div className="shelf-slot" key={p.id}>
+                    <button
+                      className="shelf-slot shelf-plant"
+                      key={p.id}
+                      disabled={!onPlantClick}
+                      onClick={() => onPlantClick(p)}
+                      aria-label={`${PLANTS[p.type].name}: sell or keep`}
+                    >
                       {p.id === event?.placedId && <Sparkles key={event.key} />}
                       <Plant type={p.type} stage={4} potIndex={p.potIndex} />
-                    </div>
+                    </button>
                   ) : (
                     <div
                       className="shelf-slot empty"
@@ -102,6 +114,7 @@ export default function Garden({ shelf, floor, floorStage, mood, message, event,
       </div>
 
       <div className="stage">
+        <RoomFurniture items={furniture} roomWidth={roomWidth} onMove={onMoveFurniture} onSellBack={onSellFurniture} />
         <div className="floor-pot" style={{ left: potX, width: FLOOR_POT_WIDTH }}>
           {showFloorPlant && event?.kind === 'complete' && <Sparkles key={event.key} />}
           {showFloorPlant ? (

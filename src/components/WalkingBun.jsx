@@ -19,7 +19,7 @@ const rand = (min, max) => min + Math.random() * (max - min)
 //
 // Props:
 //   mood      'idle' | 'working' | 'happy' | 'sad'
-//   event     { kind, key }  kind: 'planted' | 'complete' | 'task' | 'placed'
+//   event     { kind, key }  kind: 'planted' | 'complete' | 'task' | 'placed' | 'sold' | 'bought'
 //   shelving  { key, plant } when a grown plant should go up on the shelf
 //   getTargets()  measures the room: { potX, slotX, climbY, ladderH }
 //   onPickUp / onPlaced / onShelvingDone  callbacks during the ladder trip
@@ -178,7 +178,7 @@ export default function WalkingBun({ roomWidth, mood, event, shelving, getTarget
       ])
     } else if (event.kind === 'complete') {
       run([{ walkTo: besidePot }, { face: 'right' }, { do: 'cheer', ms: 2500 }, { do: 'idle' }])
-    } else if (event.kind === 'task' && latest.current.mood !== 'working' && !shelving) {
+    } else if (['task', 'sold', 'bought'].includes(event.kind) && latest.current.mood !== 'working' && !shelving) {
       run([{ do: 'cheer', ms: 1800 }, { then: afterCheer }])
     }
   }, [event?.key])
